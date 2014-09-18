@@ -1,0 +1,87 @@
+---
+title: "Linear Regression Project"
+author: "Jeff Wolbach"
+date: "Wednesday, September 17, 2014"
+output: html_document
+---
+
+Oddly, this document probably will not include any code.  If one considers only a naive model of strictly mpg vs. transmission, one can conclude that cars with manual transmissions average 7.2 mpg more than cars with automatic transmissions.  However, essentially all of that difference is due to factors other than the type of transmission.  When accounting for all relevant variables, the dependence of mpg on transmission type is statistically zero.
+
+The mtcars dataset contains information on fuel consumption and 10 aspects of automobile design and performance for 32 automobiles from the 1973-74 model year.  One of these aspects is the type of transmission, which is encoded in the dataset as a numeric variable, am, taking a value of 0 for an automatic transmission and 1 for a manual transmission.  
+
+A boxplot can be constructed to show the variation in mpg with the type of transmission (figure A1); it is seen that cars with manual transmissions have generally higher mpg than cars with automatic transmissions. A linear regression model of mpg vs. transmission type yields the equation:  mpg = 17.15 + 7.24*am, where the intercept may be interpreted as the average mpg for cars with automatic transmissions (am=0) and the sum of the slope and intercept (24.39) as the average mpg for cars with manual transmissions (am=1).  The fit of the equation to the data, and the residuals from the fit, are shown in figure A2.
+
+We should consider other variables that may be related to mpg more strongly than the type of transmission.  Figure A3 displays correlation plots of mpg with the other 9 aspects of automobile design given in the dataset, and we may calculate the the correlation coefficient of each design aspect with mpg:
+```{r, echo=FALSE}
+noodle<-cor(mtcars)
+print(round(noodle[1,-1], 3))
+```
+
+I considered five linear regression models for mpg vs. design aspects, including the type of transmission. The models were:
+
+1. mpg vs. am
+2. mpg vs. am + wt
+3. mpg vs. am + wt + cyl
+4. mpg vs. am + wt + cyl + hp
+5. mpg vs. am + wt + cyl + hp + carb
+
+The ANOVA analysis for these five models produced:
+```{r, echo=FALSE}
+anova(model1, model2, model3, model4, model5)
+```
+
+indicating that the addition of the design aspects hp and carb in models 4 and 5 did not produce a statistically meaningful improvement to model 3, and hence we should only consider the first three models.
+
+In model 1:
+```{r,echo=FALSE}
+summary(model1)$coefficients
+```
+
+In model 2:
+```{r, echo=FALSE}
+summary(model2)$coefficients
+```
+
+and in model 3:
+```{r, echo=FALSE}
+summary(model3)$coefficients
+```
+
+In models 2 and 3, the coefficient on am can not be distinguished from zero.  When the weight of the automobile is considered, this dataset does not support a distinction in mpg based on the type of transmission.
+
+
+
+
+
+#Appendix
+
+```{r, echo=FALSE}
+data(mtcars)
+boxplot(mpg~am, data=mtcars, names=c("Automatic","Manual"),ylab="Miles per Gallon", main="MPG as a Function of Transmission")
+```
+Figure A1
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+plot(mtcars$am, mtcars$mpg, xlab="Transmission Type", ylab="Miles per Gallon")
+abline(lm(mpg~am,data=mtcars), lwd=2)
+plot(mtcars$am,resid(lm(mpg~am,data=mtcars)), xlab="Transmission Type", ylab="Residual from Model")
+abline(h=0, lwd=2)
+```
+Figure A2
+
+```{r, echo=FALSE}
+par(mfrow=c(3,3))
+plot(mpg~cyl, data=mtcars)
+plot(mpg~disp, data=mtcars)
+plot(mpg~hp, data=mtcars)
+plot(mpg~drat, data=mtcars)
+plot(mpg~wt, data=mtcars)
+plot(mpg~vs, data=mtcars)
+plot(mpg~qsec, data=mtcars)
+plot(mpg~gear, data=mtcars)
+plot(mpg~carb, data=mtcars)
+```
+Figure A3
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
