@@ -2,7 +2,7 @@
 title: "Linear Regression Project"
 author: "Jeff Wolbach"
 date: "Wednesday, September 17, 2014"
-output: html_document
+output: pdf_document
 ---
 
 Oddly, this document probably will not include any code.  If one considers only a naive model of strictly mpg vs. transmission, one can conclude that cars with manual transmissions average 7.2 mpg more than cars with automatic transmissions.  However, essentially all of that difference is due to factors other than the type of transmission.  When accounting for all relevant variables, the dependence of mpg on transmission type is statistically zero.
